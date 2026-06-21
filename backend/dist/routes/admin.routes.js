@@ -1,0 +1,14 @@
+import { Router } from 'express';
+import { adminOrders, adminProductSchema, adminProductUpdateSchema, adminReviews, adminUsers, createAdminProduct, deleteAdminProduct, removeAdminReview, reviewStatusSchema, updateAdminProduct, updateReviewStatus } from '../controllers/admin.controller.js';
+import { requireAdmin, requireAuth } from '../middleware/auth.middleware.js';
+import { validate } from '../middleware/validate.middleware.js';
+export const adminRoutes = Router();
+adminRoutes.use(requireAuth, requireAdmin);
+adminRoutes.post('/products', validate(adminProductSchema), createAdminProduct);
+adminRoutes.put('/products/:id', validate(adminProductUpdateSchema), updateAdminProduct);
+adminRoutes.delete('/products/:id', deleteAdminProduct);
+adminRoutes.get('/orders', adminOrders);
+adminRoutes.get('/reviews', adminReviews);
+adminRoutes.put('/reviews/:id/status', validate(reviewStatusSchema), updateReviewStatus);
+adminRoutes.delete('/reviews/:id', removeAdminReview);
+adminRoutes.get('/users', adminUsers);

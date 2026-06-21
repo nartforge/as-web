@@ -1,0 +1,11 @@
+import { Router } from 'express';
+import { discordCallback, discordRedirect, login, loginSchema, logout, me, register, registerSchema } from '../controllers/auth.controller.js';
+import { requireAuth } from '../middleware/auth.middleware.js';
+import { validate } from '../middleware/validate.middleware.js';
+export const authRoutes = Router();
+authRoutes.post('/register', validate(registerSchema), register);
+authRoutes.post('/login', validate(loginSchema), login);
+authRoutes.post('/logout', requireAuth, logout);
+authRoutes.get('/me', requireAuth, me);
+authRoutes.get('/discord', discordRedirect);
+authRoutes.get('/discord/callback', discordCallback);

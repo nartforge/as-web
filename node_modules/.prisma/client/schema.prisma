@@ -1,0 +1,148 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Provider {
+  email
+  discord
+}
+
+enum Role {
+  user
+  admin
+}
+
+enum ProductStatus {
+  active
+  beta
+  coming_soon
+  development
+}
+
+enum ReviewStatus {
+  pending
+  approved
+  rejected
+}
+
+enum OrderStatus {
+  pending
+  paid
+  failed
+  delivered
+  cancelled
+}
+
+model User {
+  id              String     @id @default(cuid())
+  name            String
+  email           String     @unique
+  passwordHash    String?
+  discordId       String?    @unique
+  discordUsername String?
+  discordAvatar   String?
+  provider        Provider   @default(email)
+  role            Role       @default(user)
+  reviews         Review[]
+  orders          Order[]
+  cartItems       CartItem[]
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+model Product {
+  id                String        @id @default(cuid())
+  name              String
+  slug              String        @unique
+  shortDescription  String        @db.Text
+  longDescription   String        @db.Text
+  price             Decimal
+  currency          String        @default("EUR")
+  category          String
+  status            ProductStatus @default(active)
+  badges            Json
+  logo              String?
+  images            Json
+  version           String?
+  compatibility     Json
+  features          Json
+  requirements      Json
+  installationSteps Json
+  commands          Json
+  errorSolutions    Json
+  ratingAverage     Float         @default(0)
+  reviewCount       Int           @default(0)
+  isPremium         Boolean       @default(false)
+  isFeatured        Boolean       @default(false)
+  reviews           Review[]
+  orderItems        OrderItem[]
+  cartItems         CartItem[]
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+}
+
+model Review {
+  id        String       @id @default(cuid())
+  productId String
+  userId    String
+  rating    Int
+  comment   String       @db.Text
+  status    ReviewStatus @default(approved)
+  product   Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@index([productId])
+  @@index([userId])
+}
+
+model Order {
+  id               String      @id @default(cuid())
+  userId           String
+  totalPrice       Decimal
+  currency         String      @default("EUR")
+  paymentMethod    String
+  paymentProvider  String
+  paymentReference String?
+  status           OrderStatus @default(pending)
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items            OrderItem[]
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  @@index([userId])
+}
+
+model OrderItem {
+  id          String  @id @default(cuid())
+  orderId     String
+  productId   String
+  productName String
+  price       Decimal
+  quantity    Int     @default(1)
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  quantity  Int      @default(1)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, productId])
+  @@index([userId])
+}

@@ -1,0 +1,12 @@
+import { Router } from 'express'
+import { cancel, create, createOrderSchema, getOne, listMine, orderIdSchema } from '../controllers/order.controller.js'
+import { requireAuth } from '../middleware/auth.middleware.js'
+import { validate } from '../middleware/validate.middleware.js'
+
+export const orderRoutes = Router()
+
+orderRoutes.use(requireAuth)
+orderRoutes.get('/me', listMine)
+orderRoutes.get('/:id', validate(orderIdSchema), getOne)
+orderRoutes.post('/', validate(createOrderSchema), create)
+orderRoutes.post('/:id/cancel', validate(orderIdSchema), cancel)

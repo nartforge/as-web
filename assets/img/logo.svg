@@ -1,0 +1,6 @@
+<svg width="220" height="56" viewBox="0 0 220 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="2" y="2" width="52" height="52" rx="16" fill="url(#g)"/>
+  <path d="M28 11L43 45H35.5L32.6 37.7H19.6L16.7 45H9.5L24.5 11H28ZM21.9 31.8H30.3L26.1 21.1L21.9 31.8Z" fill="white"/>
+  <text x="68" y="36" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800" fill="currentColor">Assyte Dev</text>
+  <defs><linearGradient id="g" x1="0" y1="0" x2="56" y2="56"><stop stop-color="#00F5FF"/><stop offset="1" stop-color="#1D7BFF"/></linearGradient></defs>
+</svg>
